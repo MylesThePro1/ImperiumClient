@@ -154,37 +154,3 @@ publishing {
 		}
 	}
 }
-
-afterEvaluate {
-	tasks.getByName("publishModrinth") {
-		dependsOn(rootProject.tasks.getByName("generateVersionChangelog"))
-	}
-	tasks.getByName("publishCurseforge") {
-		dependsOn(rootProject.tasks.getByName("generateVersionChangelog"))
-	}
-}
-
-publishMods {
-	file.set(tasks.jar.flatMap { it.archiveFile })
-	additionalFiles.from(tasks.sourcesJar.flatMap { it.archiveFile })
-	changelog.set(rootProject.layout.buildDirectory.file("changelog").map { it.asFile.readText() })
-	type.set(STABLE)
-	modLoaders.add("fabric")
-
-
-	modrinth {
-		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
-		projectId.set("p2rxzX0q")
-		minecraftVersions.set(listOf(minecraftVersion))
-		requires { slug = "fabric-api" }
-		embeds { slug = "axolotlclient-rendering" }
-	}
-
-	curseforge {
-		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
-		minecraftVersions.set(listOf(minecraftVersion))
-		projectId.set("809392")
-		requires { slug = "fabric-api" }
-		client = true
-	}
-}
